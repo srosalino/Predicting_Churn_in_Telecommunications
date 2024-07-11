@@ -1,0 +1,181 @@
+--- 
+title: "MAS: Trabalho de Grupo (14)"
+author: "Hélio Henrique Ferreira Samuel"
+date: "25 de março, 2022"
+output: word_document
+---
+
+```{r}
+# Incluir as libraries de que necessita
+
+library(MASS)
+library(Metrics)
+library(caret)
+library(DescTools)
+library(e1071)
+library(rcompanion)
+library(ISR)
+library(lsr)
+library(BBmisc)
+library(fastDummies)
+library(dplyr)
+library(mgcv)
+library(nnet)
+library(tree)
+library(psych)
+```
+
+# 1.	Leitura dos dados Cellular e análise preliminar dos mesmos  
+
+## 1.1) Leitura os dados usando cellular<-read.csv("Cellular.csv", header=TRUE, dec=".", sep=";").Nota: verifique sep no ficheiro de origem.  
+
+```{r}
+cellular = read.csv("cellular.csv", sep=";", header=TRUE)
+View(cellular)
+
+names(cellular)
+
+dim(cellular)
+
+```
+
+## 1.2) [1 valor] Apresentação de head(cellular), definição do fator score_r e apresentação da tabela de frequências absolutas correspondente
+
+```{r}
+# Head do cellular
+
+head(cellular)
+
+# Fatorizar o score_r
+
+cellular$score_r = as.factor(cellular$score_r)
+
+# Tabela de frequências absolutas
+
+table(cellular$score_r)
+
+```
+
+## 1.3)[0.5 valores] Realização de uma análise descritiva dos dados apresentando o número de observações, mínimo, máximo, média, desvio padrão, medida de assimetria e de achatamento
+
+```{r}
+summary(cellular)
+
+describe(cellular)
+
+```
+
+## 1.4) [0.5 valores] Divisão dos dados em amostra de treino (65%) e de teste (35%) usando set.seed(888) e apresentação de tabela de frequências absolutas de score_r em cada amostra
+
+```{r}
+set.seed(888)
+ind_treino = sample(nrow(cellular), nrow(cellular)*.65)
+cellular_treino = cellular[ind_treino,]
+cellular_teste = cellular[-ind_treino,]
+
+# Tabela de frequências absolutas de score_r para data dataset de treino
+
+table(cellular_treino$score_r)
+
+# Tabela de frequências absolutas de score_r para data dataset de teste
+
+table(cellular_teste$score_r)
+
+```
+
+## 1.5)	[0.5 valores] Obtenção dos dados dos preditores normalizados (normalização 0-1), nas amostras de treino e teste, e apresentação das primeiras 6 linhas destas amostras após normalização
+
+```{r}
+# Definição da função de normalização
+
+normalize_min_max <- function(x){
+  return ((x - min(x)) / (max(x)-min(x)))}
+
+cellular_treino_n = cellular_treino 
+cellular_treino_n[, 1:5] = sapply(cellular_treino_n[,1:5], normalize_min_max)
+
+cellular_teste_n = cellular_teste
+cellular_teste_n[, 1:5] = sapply(cellular_teste_n[, 1:5], normalize_min_max)
+```
+
+## 1.6) [1 valor] Completação das frases seguintes em comentário do script (com eventual obtenção de resultados adicionais): 
+
+```{r}
+
+#
+#A dimensão de “Cellular.csv” é de 250 número de linhas e 7 número de colunas; na amostra original encontram-se 200 casos com score_r=”No churn” e no conjunto de teste esta categoria corresponde a 85.23 % das observações
+
+```
+
+# 2. Aprendizagem, sobre a amostra de treino, do 3-Nearest Neighbour (baseado em dois preditores) para prever score_r e avaliação do seu desempenho
+## 2.1) [1.5 valores] Escolha dos preditores, justificando
+
+```{r}
+
+# Vamos analisar os preditores mais promissores
+
+correlacoes = round(cor(cellular_treino_n[, 1:6]), 2)
+correlacoes[1:5, 6]
+
+# Vamos escolher minutes e bill como os dois melhores preditores pois são os que
+# apresentam correlações mais altas com a variável target
+
+```
+
+## 2.2) [2 valores] Obtenção do modelo e das correspondentes estimativas de score_r sobre amostra de teste
+
+```{r}
+
+
+
+```
+## 2.3) [2 valores] Apresentação da Confusion matrix sobre amostra de teste e do índice de Huberty correspondente
+
+```{r}
+
+```
+## 2.4) [2 valores] Completação das frases seguintes em comentário do script (com eventual obtenção de resultados adicionais): 
+
+```{r}
+
+#Na aprendizagem foram usados dados ___________(normalizados/ não normalizados); as observações mais próximas da primeira observação do conjunto de teste são______________ (números das observações); a probabilidade da última observação do conjunto de teste pertencer à classe alvo “No churn”, estimada pelo modelo, é__________________; segundo os resultados estimados, o churn dos clientes na amostra de teste será _______________%.
+
+```
+
+# 3. Aprendizagem, sobre a amostra de treino, de uma Árvore de Regressão para prever score e avaliação do seu desempenho
+## 3.1) [1.5 valores] Obtenção do modelo, com cerca de 10 nós folha, e apresentação da árvore correspondente
+
+```{r}
+
+
+```
+
+## 3.2) [1.5 valores] Estimação de score sobre amostra de teste, a partir da árvore obtida, e apresentação das estimativas correspondentes às 6 primeiras observações desta amostra
+
+```{r}
+
+
+```
+
+## 3.3) [1.5 valores] Apresentação de 3 métricas de regressão associadas ao modelo aplicado sobre a amostra de teste
+
+```{r}
+
+```
+
+## 3.4) [1 valor] Apresentação, com base nas estimativas obtidas em 3.2), de uma tabela de frequências para as categorias churn  e  No churn
+
+```{r}
+
+```
+
+## 3.5) [2 valores] Completação das frases seguintes em comentário do script (com eventual obtenção de resultados adicionais): 
+
+```{r}
+
+  
+#Na aprendizagem foram usados dados ________ (normalizados/ não normalizados);  o R-Square associado ao modelo sobre o teste é______________; o nó folha com menor frequência inclui ________________observações do teste;  segundo os resultados estimados, a % de observações da amostra de teste suscetíveis de fazer churn será ______________.
+
+```
+
+
